@@ -6,6 +6,7 @@ decisoes <- readRDS("banco/decisoes.rds")
 # Fonte dos dados: Corte aberta STF
 # Link: https://transparencia.stf.jus.br/extensions/decisoes/decisoes.html
 # Data de download: Sexta-feira 10 de novembro de 2023.
+# OBS: ETL não incluso (:
 
 # 1.0 Análises ----
 
