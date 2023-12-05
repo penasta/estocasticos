@@ -35,3 +35,6 @@ vector_frequencies <- function(vector) {
 
 `%notin%` <- Negate(`%in%`)
 
+# seed (minha matrícula rs)
+
+seed <- 150167636

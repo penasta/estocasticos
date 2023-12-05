@@ -207,7 +207,12 @@ HC = left_join(HC,v,by='mes')
 rm(v,df)
 colnames(HC)[7] <- 'fi'
 
-juiz = "Juiz 1"
+# Removendo o Juiz 11, pois este tem apenas 1 decisão em 2023.
+HC <- HC |>
+  filter(nome != "Juiz 11") |>
+  select(!nsim)
+
+juiz = "Juiz 1" 
 HC %>%
   filter(ano == 2023,
          nome == juiz,
@@ -218,6 +223,11 @@ HC %>%
   select(lambda) %>%
   pull() %>%
   ks.test(., "ppois",lambda=mean(.))
+
+# Juizes 1 e 4 não rejeitam a hipótese nula a 10%
+# a 5%, Juiz 3 não rejeita
+# a 1%; Juizes 2,7 e 10 não rejeitam
+# Portanto, mais da metade não rejeita a hipótese de ser Poisson a 1% de significância.
 
 HC %>%
   filter(ano == 2023,
@@ -251,6 +261,8 @@ HC |>
          mes %notin% c('nov','dez')) |>
   ungroup() |> select(n) |> summary()
 
+# N(t) =
+
 HC |>
   filter(ano == 2023,
          mes %notin% c('nov','dez')) |>
@@ -258,20 +270,21 @@ HC |>
 
 # Estimado
 
-#juiz = "Juiz 1"
 HC |>
-  filter(ano == 2023,
-#         nome == juiz,
-         mes %notin% c('nov','dez')) |>
-  select(!nsim) |>
-  mutate(nsim = rpois(n=1,lambda=n*fi)) |>
+  filter(ano == 2023,mes %notin% c('nov','dez')) |>
+  ungroup() |>
+  group_by(nome) |>
+  mutate(lambdai = mean(n)) |>
+  mutate(nsim = (rpois(n=1,lambda=lambdai))*fi) |>
   ungroup() |>
   select(nsim) |>
   summary()
 
+# E(N(t)) = 
+
+set.seed(seed)
 HC |>
   filter(ano == 2023,mes %notin% c('nov','dez')) |>
-  select(!nsim) |>
   ungroup() |>
   group_by(nome) |>
   mutate(lambdai = mean(n)) |>
@@ -279,3 +292,5 @@ HC |>
   ungroup() |>
   select(nsim) |>
   sum()
+
+# Daqui, vemos que as estimativas foram significamente inferiores ao real observado, indicando que possivelmente a função de intensidade não é ] 0 para v_{dnu}; 1 para v_{du} [
