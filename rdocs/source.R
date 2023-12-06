@@ -1,7 +1,7 @@
 if (!require("pacman")) install.packages("pacman")
 # Pacotes ----
-pacman::p_load(tidyverse,data.table,scales,lubridate,geobr,
-               abjutils,ggrepel,xlsx,readr,sf,car,lmtest,lubridate)
+pacman::p_load(tidyverse,data.table,scales,lubridate,
+               abjutils,ggrepel,xlsx,readr,sf,car,lubridate)
 
 # Removendo notação científica ----
 options(scipen = 999)

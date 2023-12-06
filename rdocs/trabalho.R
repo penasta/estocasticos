@@ -7,6 +7,7 @@ decisoes <- readRDS("banco/decisoes.rds")
 # Link: https://transparencia.stf.jus.br/extensions/decisoes/decisoes.html
 # Data de download: Sexta-feira 10 de novembro de 2023.
 # OBS: ETL não incluso (:
+# Descrição ETL: selecionou-se apenas as colunas de data, classe e nome. Agregou-se por ano, mês e nome (soma de processos do juiz i no mes j no ano k; ou seja, contagem de processos do mês (dias))
 
 # 1.0 Análises ----
 
@@ -294,3 +295,36 @@ HC |>
   sum()
 
 # Daqui, vemos que as estimativas foram significamente inferiores ao real observado, indicando que possivelmente a função de intensidade não é ] 0 para v_{dnu}; 1 para v_{du} [
+
+set.seed(seed)
+HC |>
+  filter(ano == 2023,mes %notin% c('nov','dez')) |>
+  ungroup() |>
+  group_by(nome) |>
+  mutate(lambdai = mean(n)) |>
+  mutate(nsim = (rpois(n=1,lambda=lambdai))*fi) |>
+  ungroup() |>
+  select(nsim,n) |>
+  reshape2::melt() |>
+  mutate(variable = ifelse(variable == "n","Número real","Número simulado")) |>
+  ggplot() +
+  aes(
+    x = variable,
+    y = value
+  ) +
+  geom_boxplot(fill = c("#006eab"), width = 0.5) +
+  stat_summary(
+    fun = "mean", geom = "point", shape = 23, size = 3, fill = "#ffffff"
+  ) +
+  labs(x = "", y = "") +
+  theme_minimal()
+ggsave("resultados/boxplot.pdf", width = 158, height = 93, units = "mm")
+
+v = HC |>
+  filter(ano == 2023,mes %notin% c('nov','dez')) |>
+  ungroup() |>
+  group_by(nome) |>
+  mutate(lambdai = mean(n)) |>
+  mutate(nsim = (rpois(n=1,lambda=lambdai))*fi) |>
+  ungroup() |>
+  select(nsim,n)
