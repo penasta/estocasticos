@@ -213,7 +213,7 @@ HC <- HC |>
   filter(nome != "Juiz 11") |>
   select(!nsim)
 
-juiz = "Juiz 1" 
+juiz = "Juiz 6" 
 HC %>%
   filter(ano == 2023,
          nome == juiz,
@@ -318,7 +318,7 @@ HC |>
   ) +
   labs(x = "", y = "") +
   theme_minimal()
-ggsave("resultados/boxplot.pdf", width = 158, height = 93, units = "mm")
+#ggsave("resultados/boxplot.pdf", width = 158, height = 93, units = "mm")
 
 v = HC |>
   filter(ano == 2023,mes %notin% c('nov','dez')) |>
